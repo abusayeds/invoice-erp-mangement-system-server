@@ -172,16 +172,6 @@ const settingSchema = new Schema(
       send_via: String,
     },
 
-    // Custom UI colors (App Settings → Theme): "#rrggbb", or "" = theme default.
-    theme: {
-      button_color: String,
-      navbar_bg: String,
-      sidebar_bg: String,
-      sidebar_active: String,
-      list_sidebar_bg: String,
-      layout_bg: String,
-    },
-
     // Notification Settings (reminders / recurring) — additive, optional.
     notification: {
       timezone: String,

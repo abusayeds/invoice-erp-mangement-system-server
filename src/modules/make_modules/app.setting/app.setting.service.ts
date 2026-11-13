@@ -1,7 +1,5 @@
 import { Types } from "mongoose";
-import httpStatus from "http-status";
-import AppError from "../../../errors/AppError";
-import { THEME_COLOR_KEYS, TSettingType } from "./app.setting.interface";
+import { TSettingType } from "./app.setting.interface";
 import { SettingModel } from "./app.setting.model";
 import { setting_seed_data } from "../../../utils/seed/seed.setting";
 
@@ -30,7 +28,6 @@ const SUB_TYPE_MAP: Partial<Record<TSettingType, string[]>> = {
   security:         [],
   titles:           [],
   whatsApp:         [],
-  theme:            [],
   notification:     [],
   expense:          [],
   service:          [],
@@ -55,26 +52,6 @@ const validateTypeAndSubType = (
     if (!validSubTypes.includes(subType)) {
       throw new Error(
         `Invalid subType '${subType}' for type '${type}'. Valid: ${validSubTypes.join(", ")}`
-      );
-    }
-  }
-};
-
-// Theme colors must be "#rrggbb" or "" (= use the Appearance default).
-const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
-const validateThemePayload = (payload: Record<string, unknown>): void => {
-  for (const [key, value] of Object.entries(payload)) {
-    if (key === "type" || key === "subType") continue;
-    if (!(THEME_COLOR_KEYS as readonly string[]).includes(key)) {
-      throw new AppError(
-        httpStatus.BAD_REQUEST,
-        `Invalid theme key '${key}'. Valid: ${THEME_COLOR_KEYS.join(", ")}`
-      );
-    }
-    if (typeof value !== "string" || (value !== "" && !HEX_COLOR.test(value))) {
-      throw new AppError(
-        httpStatus.BAD_REQUEST,
-        `Invalid color for '${key}'. Use a hex color like #1a85ff, or "" for the default.`
       );
     }
   }
@@ -131,7 +108,6 @@ const getSettingTypesService = () => {
   subType?: string
 ) => {
   validateTypeAndSubType(type, subType);
-  if (type === "theme") validateThemePayload(payload);
 
   const dotNotationUpdate: Record<string, unknown> = {};
   // `type`/`subType` are routing discriminators, not data — never persist them
