@@ -3,12 +3,13 @@ import { Server as HttpServer } from "http";
 import { Server as SocketIOServer } from "socket.io";
 import mongoose from "mongoose";
 import seedSuperAdmin from "./DB";
-import seedPlans from "./DB/seedPlans";
 import app from "./app";
 import { DATABASE_URL, PORT } from "./config";
 import { initSocketIO } from "./utils/socket";
 import { createServer } from "node:http";
 import http from "http";
+import seedPlans from "./DB/seedPlans";
+import seedUsers from "./DB/seedFunction";
 
 const server = http.createServer(app);
 initSocketIO(server);
@@ -21,9 +22,8 @@ async function main() {
 
     // Seed super admin data
     await seedSuperAdmin();
-
-    // Seed the default subscription plans (Free / Starter / Pro) if missing
     await seedPlans();
+
     server.listen(PORT, () => {
       console.log(`Server is running on ${PORT}`);
     });
